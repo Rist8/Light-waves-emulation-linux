@@ -1,6 +1,8 @@
-﻿#include <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 #include <math.h>
 #include <iostream>
+#include <execution>
+#include <algorithm>
 
 struct Block {
 	Block(double w = 1, double h = 0) :weight(w), speed(0), height(h) {}
@@ -18,9 +20,15 @@ public:
 	}
 
 	void Update() {
-		for (int i = 1; i < width - 1; ++i)
-			for (int j = 1; j < height - 1; ++j)
-				Block_UpdateSpeed(i, j);
+		auto Column_UpdateSpeed  = [this](Block*& num){
+			for(int i = 1; i < height - 1; ++i){
+				Block_UpdateSpeed(&num - wave, i);
+			}
+		};
+		std::for_each(std::execution::par_unseq, wave + 1, wave + width - 1, Column_UpdateSpeed);
+//		for (int i = 1; i < width - 1; ++i)
+//			for (int j = 1; j < height - 1; ++j)
+				//Block_UpdateSpeed(i, j);
 		for (int i = 1; i < width - 1; ++i)
 			for (int j = 1; j < height - 1; ++j)
 				Block_Update(i, j);
