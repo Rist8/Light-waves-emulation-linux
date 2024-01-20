@@ -1,4 +1,4 @@
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <math.h>
 #include <iostream>
 #include <execution>
@@ -20,18 +20,23 @@ public:
 	}
 
 	void Update() {
-		auto Column_UpdateSpeed  = [this](Block*& num){
-			for(int i = 1; i < height - 1; ++i){
+		auto Column_UpdateSpeed = [this](Block*& num) {
+			for (int i = 1; i < height - 1; ++i) {
 				Block_UpdateSpeed(&num - wave, i);
+			}
+			};
+#ifndef PARALLEL
+		std::for_each(std::execution::seq, wave + 1, wave + width - 1, Column_UpdateSpeed);
+#endif
+#ifdef PARALLEL
+		auto Column_Update = [this](Block*& num) {
+			for (int i = 1; i < height - 1; ++i) {
+				Block_Update(&num - wave, i);
 			}
 		};
 		std::for_each(std::execution::par_unseq, wave + 1, wave + width - 1, Column_UpdateSpeed);
-//		for (int i = 1; i < width - 1; ++i)
-//			for (int j = 1; j < height - 1; ++j)
-				//Block_UpdateSpeed(i, j);
-		for (int i = 1; i < width - 1; ++i)
-			for (int j = 1; j < height - 1; ++j)
-				Block_Update(i, j);
+		std::for_each(std::execution::par_unseq, wave + 1, wave + width - 1, Column_Update);
+#endif
 	}
 
 	void ImpulseCircle(int x, int y, int r) {
@@ -93,11 +98,16 @@ private:
 		down = wave[x][y + 1].height;
 		sum = (left + down + right + up);
 		wave[x][y].speed += ((sum / 4 - wave[x][y].height) / wave[x][y].weight);
+#ifndef PARALLEL
+		wave[x - 1][y].height += wave[x - 1][y].speed;
+#endif
 	}
 
+#ifdef PARALLEL
 	void Block_Update(int x, int y) {
 		wave[x][y].height += wave[x][y].speed;
 	}
+#endif
 
 	Block** wave;
 	unsigned width, height;
@@ -108,7 +118,7 @@ int main(int argc, char* argv[])
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		return 1;
-	SDL_Window* window = SDL_CreateWindow("WAVRS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1920, 1080, SDL_WINDOW_FULLSCREEN);
+	SDL_Window* window = SDL_CreateWindow("WAVRS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1920, 1080, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	if (window == NULL)
 		return 1;
 	SDL_Surface* window_surface = SDL_GetWindowSurface(window);
@@ -139,6 +149,5 @@ int main(int argc, char* argv[])
 		}
 		SDL_UpdateWindowSurface(window);
 		map.Update();
-		//Sleep(10);
 	}
 }
