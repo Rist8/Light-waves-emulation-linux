@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: SDL2
+      run: sudo apt install libsdl2-dev libsdl2-2.0-0 -y
     - name: make
       run: make
     - name: make cppcheck
