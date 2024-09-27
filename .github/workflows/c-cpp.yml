@@ -13,10 +13,6 @@ jobs:
     - uses: actions/checkout@v4
     - name: install SDL2
       run: sudo apt install libsdl2-dev libsdl2-2.0-0 -y
-    - name: install cppcheck
-      run: sudo apt install cppcheck
-    - name: make cppcheck
-      run: make cppcheck
   
   syntax-check:
     runs-on: ubuntu-latest
@@ -24,5 +20,5 @@ jobs:
     - uses: actions/checkout@v4
     - name: install cppcheck
       run: sudo apt install cppcheck
-    - name: make cppcheck
+    - name: cppcheck logs
       run: make cppcheck
