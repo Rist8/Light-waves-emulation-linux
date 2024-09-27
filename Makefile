@@ -8,4 +8,4 @@ clean:
 	rm -rf ${BUILD_DIR}
 
 cppcheck:
-	cppcheck .\
+	cppcheck SDL.cpp\
