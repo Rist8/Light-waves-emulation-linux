@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		return 1;
-	SDL_Window* window = SDL_CreateWindow("WAVRS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1920, 1080, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	SDL_Window* window = SDL_CreateWindow("WAVES", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1920, 1080, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	if (window == NULL)
 		return 1;
 	SDL_Surface* window_surface = SDL_GetWindowSurface(window);
